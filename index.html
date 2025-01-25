@@ -6,13 +6,18 @@
     <title>Perfect Notebook Converter</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .notebook-width {
+            width: 816px;  /* A4 paper width in pixels */
+            max-width: 100%;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 min-h-screen p-8">
     <div class="max-w-4xl mx-auto">
         <h1 class="text-3xl font-bold text-center mb-8 font-serif text-gray-800">Perfect Notebook Converter</h1>
         
         <div class="bg-white rounded-xl shadow-xl p-6 mb-6">
-            <!-- UI controls remain the same -->
             <div class="flex gap-4 mb-4 flex-wrap">
                 <div>
                     <label class="block text-sm font-bold mb-2">Pen Color:</label>
@@ -31,7 +36,6 @@
                 </div>
             </div>
 
-            <!-- Text input and preview sections remain the same -->
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2 font-sans">
                     Type your notes:
@@ -42,16 +46,18 @@
                     placeholder="Write your notes here..."></textarea>
             </div>
             
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2 font-sans">
-                    Notebook Preview:
-                </label>
-                <div 
-                    id="preview" 
-                    class="w-full min-h-[300px] p-6 rounded-lg font-['Caveat'] text-2xl border-l-4 border-red-200 
-                           bg-[length:100%_40px] bg-[linear-gradient(to_bottom,#cbd5e1_1px,transparent_1px)] 
-                           leading-[40px] pl-[52px] shadow-inner pt-2 bg-white text-black"
-                    style="white-space: pre-wrap; word-wrap: break-word;"></div>
+            <div class="mb-4 flex justify-center">
+                <div class="notebook-width">
+                    <label class="block text-gray-700 text-sm font-bold mb-2 font-sans">
+                        Notebook Preview:
+                    </label>
+                    <div 
+                        id="preview" 
+                        class="w-full min-h-[300px] p-6 rounded-lg font-['Caveat'] text-2xl border-l-4 border-red-200 
+                               bg-[length:100%_40px] bg-[linear-gradient(to_bottom,#cbd5e1_1px,transparent_1px)] 
+                               leading-[40px] pl-[52px] shadow-inner pt-2 bg-white text-black"
+                        style="white-space: pre-wrap; word-wrap: break-word;"></div>
+                </div>
             </div>
             
             <div class="flex justify-end gap-4">
@@ -116,7 +122,6 @@
         }
 
         function resetDefaults() {
-            // Fixed: Only remove current color classes instead of all text/bg classes
             preview.classList.remove(currentColor);
             preview.classList.remove(currentBg);
             preview.classList.add('bg-white', 'text-black');
@@ -132,7 +137,6 @@
 
         async function downloadPerfectCopy() {
             try {
-                // Ensure font is loaded before proceeding
                 await document.fonts.load('32px "Caveat"');
             } catch (e) {
                 console.error('Font loading error:', e);
@@ -142,66 +146,81 @@
 
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            const scale = 3;
+            const scale = 2;
             
-            // Get precise measurements
-            const previewRect = preview.getBoundingClientRect();
-            const style = window.getComputedStyle(preview);
-            const lineHeight = parseFloat(style.lineHeight);
-            const paddingTop = parseFloat(style.paddingTop);
-            const paddingLeft = parseFloat(style.paddingLeft);
-            const paddingRight = parseFloat(style.paddingRight);
-            const maxTextWidth = previewRect.width - paddingLeft - paddingRight - 28;
+            // Fixed dimensions to match preview
+            const notebookWidth = 816; // Matches CSS notebook-width
+            const pagePadding = 24;
+            const lineHeight = 40;
+            
+            // Calculate height based on content
+            const tempDiv = document.createElement('div');
+            tempDiv.style.visibility = 'hidden';
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.width = `${notebookWidth}px`;
+            tempDiv.style.whiteSpace = 'pre-wrap';
+            tempDiv.style.font = '32px "Caveat"';
+            tempDiv.style.padding = '24px 24px 24px 52px';
+            tempDiv.style.lineHeight = '40px';
+            tempDiv.textContent = preview.textContent;
+            document.body.appendChild(tempDiv);
+            
+            const contentHeight = tempDiv.offsetHeight;
+            document.body.removeChild(tempDiv);
 
             // Set canvas dimensions
-            canvas.width = Math.floor(previewRect.width * scale);
-            canvas.height = Math.floor(preview.scrollHeight * scale);
+            canvas.width = notebookWidth * scale;
+            canvas.height = contentHeight * scale;
             
             // HD rendering setup
             ctx.scale(scale, scale);
-            ctx.imageSmoothingEnabled = false;
+            ctx.imageSmoothingEnabled = true;
 
             // Draw background
-            ctx.fillStyle = style.backgroundColor;
-            ctx.fillRect(0, 0, canvas.width/scale, canvas.height/scale);
+            ctx.fillStyle = getComputedStyle(preview).backgroundColor;
+            ctx.fillRect(0, 0, notebookWidth, contentHeight);
 
             // Draw margin line
             ctx.strokeStyle = '#fecaca';
             ctx.lineWidth = 4;
             ctx.beginPath();
             ctx.moveTo(32.5, 0);
-            ctx.lineTo(32.5, canvas.height/scale);
+            ctx.lineTo(32.5, contentHeight);
             ctx.stroke();
 
             // Draw horizontal lines
             ctx.strokeStyle = '#cbd5e1';
             ctx.lineWidth = 1;
-            for(let y = paddingTop; y < canvas.height/scale; y += lineHeight) {
+            const startY = pagePadding + 2; // Match preview's pt-2 (2px padding-top)
+            for(let y = startY; y < contentHeight; y += lineHeight) {
                 const lineY = Math.floor(y) + 0.5;
                 ctx.beginPath();
                 ctx.moveTo(44.5, lineY);
-                ctx.lineTo(canvas.width/scale - 20.5, lineY);
+                ctx.lineTo(notebookWidth - pagePadding, lineY);
                 ctx.stroke();
             }
 
             // Prepare text
             ctx.font = `32px "Caveat"`;
-            ctx.fillStyle = style.color;
+            ctx.fillStyle = getComputedStyle(preview).color;
             ctx.textBaseline = 'top';
+
+            // Text positioning
+            const textX = 52; // Matches preview's pl-[52px]
+            const maxTextWidth = notebookWidth - textX - pagePadding;
+            let currentY = startY;
 
             // Wrap text and draw
             const lines = preview.textContent.split('\n');
-            let currentY = paddingTop;
-            
-            lines.forEach(originalLine => {
-                const words = originalLine.split(' ');
+            lines.forEach(line => {
+                let words = line.split(' ');
                 let currentLine = words[0] || '';
                 
                 for(let i = 1; i < words.length; i++) {
                     const testLine = currentLine + ' ' + words[i];
                     const metrics = ctx.measureText(testLine);
                     if (metrics.width > maxTextWidth) {
-                        ctx.fillText(currentLine, paddingLeft, currentY);
+                        ctx.fillText(currentLine, textX, currentY);
                         currentY += lineHeight;
                         currentLine = words[i];
                     } else {
@@ -210,7 +229,7 @@
                 }
                 
                 if (currentLine) {
-                    ctx.fillText(currentLine, paddingLeft, currentY);
+                    ctx.fillText(currentLine, textX, currentY);
                     currentY += lineHeight;
                 }
             });
