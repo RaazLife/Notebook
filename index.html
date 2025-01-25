@@ -3,243 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfect Notebook Converter</title>
+    <title>InkSpire - Digital Notebook</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        .notebook-width {
-            width: 816px;  /* A4 paper width in pixels */
-            max-width: 100%;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
 </head>
-<body class="bg-gray-100 min-h-screen p-8">
-    <div class="max-w-4xl mx-auto">
-        <h1 class="text-3xl font-bold text-center mb-8 font-serif text-gray-800">Perfect Notebook Converter</h1>
-        
-        <div class="bg-white rounded-xl shadow-xl p-6 mb-6">
-            <div class="flex gap-4 mb-4 flex-wrap">
-                <div>
-                    <label class="block text-sm font-bold mb-2">Pen Color:</label>
-                    <div class="flex gap-2">
-                        <button data-color="text-black" class="pen-color w-8 h-8 rounded-full bg-black border-2 border-gray-300 ring-2 ring-blue-500"></button>
-                        <button data-color="text-blue-600" class="pen-color w-8 h-8 rounded-full bg-blue-600 border-2 border-gray-300"></button>
-                        <button data-color="text-red-600" class="pen-color w-8 h-8 rounded-full bg-red-600 border-2 border-gray-300"></button>
+<body class="bg-gradient-to-br from-rose-50 to-indigo-50 min-h-screen p-8">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <header class="mb-12 text-center relative">
+            <div class="absolute -top-4 left-1/2 -translate-x-1/2 w-24 h-2 bg-rose-200/50 rounded-full"></div>
+            <h1 class="text-5xl font-bold text-slate-800 mb-2 font-['Patrick+Hand'] relative inline-block">
+                <span class="absolute -left-8 top-3 text-4xl">📖</span>
+                InkSpire
+                <span class="absolute -right-8 top-3 text-4xl">✨</span>
+            </h1>
+            <p class="text-slate-600 font-['Patrick+Hand'] text-xl">Your Digital Writing Companion</p>
+        </header>
+
+        <!-- Main Container -->
+        <div class="flex flex-col lg:flex-row gap-8 items-start">
+            <!-- Controls Panel -->
+            <div class="w-full lg:w-64 shrink-0 space-y-6 lg:sticky lg:top-8">
+                <!-- Color Picker -->
+                <div class="p-6 rounded-2xl bg-white/80 backdrop-blur-sm shadow-lg border border-white/50">
+                    <div class="space-y-6">
+                        <div>
+                            <p class="font-['Patrick+Hand'] text-slate-700 text-lg mb-3">Ink Color</p>
+                            <div class="grid grid-cols-3 gap-3">
+                                <button data-color="text-slate-800" class="w-full aspect-square rounded-xl bg-slate-800 shadow-md hover:scale-105 transition-transform ink-color ring-2 ring-blue-500"></button>
+                                <button data-color="text-rose-600" class="w-full aspect-square rounded-xl bg-rose-600 shadow-md hover:scale-105 transition-transform ink-color"></button>
+                                <button data-color="text-indigo-600" class="w-full aspect-square rounded-xl bg-indigo-600 shadow-md hover:scale-105 transition-transform ink-color"></button>
+                                <button data-color="text-emerald-600" class="w-full aspect-square rounded-xl bg-emerald-600 shadow-md hover:scale-105 transition-transform ink-color"></button>
+                                <button data-color="text-amber-600" class="w-full aspect-square rounded-xl bg-amber-600 shadow-md hover:scale-105 transition-transform ink-color"></button>
+                                <button data-color="text-pink-600" class="w-full aspect-square rounded-xl bg-pink-600 shadow-md hover:scale-105 transition-transform ink-color"></button>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <p class="font-['Patrick+Hand'] text-slate-700 text-lg mb-3">Paper Style</p>
+                            <div class="grid grid-cols-2 gap-3">
+                                <button data-bg="bg-white" class="w-full aspect-square rounded-xl bg-white shadow-md hover:scale-105 transition-transform paper-style ring-2 ring-blue-500"></button>
+                                <button data-bg="bg-amber-50" class="w-full aspect-square rounded-xl bg-amber-50 shadow-md hover:scale-105 transition-transform paper-style"></button>
+                                <button data-bg="bg-blue-50" class="w-full aspect-square rounded-xl bg-blue-50 shadow-md hover:scale-105 transition-transform paper-style"></button>
+                                <button data-bg="bg-rose-50" class="w-full aspect-square rounded-xl bg-rose-50 shadow-md hover:scale-105 transition-transform paper-style"></button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-bold mb-2">Background:</label>
-                    <div class="flex gap-2">
-                        <button data-bg="bg-white" class="bg-color w-8 h-8 rounded-full bg-white border-2 border-gray-300 ring-2 ring-blue-500"></button>
-                        <button data-bg="bg-amber-50" class="bg-color w-8 h-8 rounded-full bg-amber-50 border-2 border-gray-300"></button>
-                    </div>
+
+                <!-- Action Buttons -->
+                <div class="space-y-3">
+                    <button id="resetBtn" class="w-full px-4 py-3 bg-white/80 backdrop-blur-sm hover:bg-white text-slate-700 rounded-xl shadow-md 
+                                              border border-white transition-all hover:shadow-lg flex items-center justify-center gap-2
+                                              font-['Patrick+Hand'] text-lg">
+                        🧹 Clear Canvas
+                    </button>
+                    <button id="downloadBtn" class="w-full px-4 py-3 bg-gradient-to-br from-rose-500 to-indigo-500 hover:from-rose-600 hover:to-indigo-600 
+                                                 text-white rounded-xl shadow-lg transition-all hover:shadow-xl 
+                                                 flex items-center justify-center gap-2 font-['Patrick+Hand'] text-lg">
+                        📸 Capture Page
+                    </button>
                 </div>
             </div>
 
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2 font-sans">
-                    Type your notes:
-                </label>
+            <!-- Editor Section -->
+            <div class="flex-1 w-full">
+                <!-- Text Input -->
                 <textarea 
-                    id="textInput" 
-                    class="w-full h-48 p-4 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 bg-gray-50 font-sans placeholder-gray-400"
-                    placeholder="Write your notes here..."></textarea>
-            </div>
-            
-            <div class="mb-4 flex justify-center">
-                <div class="notebook-width">
-                    <label class="block text-gray-700 text-sm font-bold mb-2 font-sans">
-                        Notebook Preview:
-                    </label>
-                    <div 
-                        id="preview" 
-                        class="w-full min-h-[300px] p-6 rounded-lg font-['Caveat'] text-2xl border-l-4 border-red-200 
-                               bg-[length:100%_40px] bg-[linear-gradient(to_bottom,#cbd5e1_1px,transparent_1px)] 
-                               leading-[40px] pl-[52px] shadow-inner pt-2 bg-white text-black"
-                        style="white-space: pre-wrap; word-wrap: break-word;"></div>
+                    placeholder="Begin your creative journey here..."
+                    class="w-full h-48 p-6 text-lg border-2 border-white/50 rounded-2xl shadow-lg focus:ring-2 focus:ring-rose-300 
+                           placeholder-slate-400 text-slate-700 bg-white/50 backdrop-blur-sm resize-none
+                           transition-all duration-200 focus:bg-white/80 mb-8 font-['Patrick+Hand']"></textarea>
+
+                <!-- Notebook Preview -->
+                <div class="relative group">
+                    <div class="absolute -inset-2 bg-gradient-to-r from-rose-100/50 to-indigo-100/50 rounded-3xl 
+                              blur-lg opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="preview-container relative w-full min-h-[600px] p-8 rounded-2xl shadow-2xl 
+                              bg-white bg-[length:100%_40px] bg-[linear-gradient(to_bottom,#e0e7ff_1px,transparent_1px)]
+                              border-l-[16px] border-slate-100 font-['Caveat'] text-2xl leading-[40px] pl-20 
+                              text-slate-800 whitespace-pre-wrap overflow-hidden">
+                        <!-- Decorative Elements -->
+                        <div class="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-white/80 to-transparent"></div>
+                        <div class="absolute left-4 top-0 bottom-0 w-1 bg-slate-200/50 rounded-full"></div>
+                        <div class="absolute left-8 top-0 bottom-0 w-0.5 bg-slate-200/30"></div>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="flex justify-end gap-4">
-                <button 
-                    id="resetBtn"
-                    class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg 
-                           transition-all duration-200 shadow-md hover:shadow-lg">
-                    Reset
-                </button>
-                <button 
-                    id="downloadBtn"
-                    class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg 
-                           transition-all duration-200 shadow-md hover:shadow-lg">
-                    📥 Download Perfect Copy
-                </button>
             </div>
         </div>
     </div>
 
     <script>
-        const textInput = document.getElementById('textInput');
-        const preview = document.getElementById('preview');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const penColors = document.querySelectorAll('.pen-color');
-        const bgColors = document.querySelectorAll('.bg-color');
+        const textarea = document.querySelector('textarea');
+        const preview = document.querySelector('.preview-container');
+        const inkColors = document.querySelectorAll('.ink-color');
+        const paperStyles = document.querySelectorAll('.paper-style');
+        const resetBtn = document.querySelector('#resetBtn');
+        const downloadBtn = document.querySelector('#downloadBtn');
 
-        let currentColor = 'text-black';
+        let currentColor = 'text-slate-800';
         let currentBg = 'bg-white';
 
-        // Initialize
-        textInput.addEventListener('input', updatePreview);
-        penColors.forEach(btn => btn.addEventListener('click', changePenColor));
-        bgColors.forEach(btn => btn.addEventListener('click', changeBgColor));
-        resetBtn.addEventListener('click', resetDefaults);
-        downloadBtn.addEventListener('click', () => downloadPerfectCopy().catch(console.error));
+        // Update preview text
+        textarea.addEventListener('input', () => {
+            preview.textContent = textarea.value;
+        });
 
-        // Set initial state
-        document.querySelector('.pen-color[data-color="text-black"]').classList.add('ring-2', 'ring-blue-500');
-        document.querySelector('.bg-color[data-bg="bg-white"]').classList.add('ring-2', 'ring-blue-500');
-        updatePreview();
+        // Handle ink color selection
+        inkColors.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const color = e.target.dataset.color;
+                preview.classList.replace(currentColor, color);
+                currentColor = color;
+                inkColors.forEach(b => b.classList.remove('ring-2', 'ring-blue-500'));
+                e.target.classList.add('ring-2', 'ring-blue-500');
+            });
+        });
 
-        function updatePreview() {
-            preview.textContent = textInput.value;
-            void preview.offsetHeight; // Trigger reflow
-        }
+        // Handle paper style selection
+        paperStyles.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const bg = e.target.dataset.bg;
+                preview.classList.replace(currentBg, bg);
+                currentBg = bg;
+                paperStyles.forEach(b => b.classList.remove('ring-2', 'ring-blue-500'));
+                e.target.classList.add('ring-2', 'ring-blue-500');
+            });
+        });
 
-        function changePenColor(e) {
-            const color = e.target.dataset.color;
-            preview.classList.replace(currentColor, color);
-            currentColor = color;
-            penColors.forEach(b => b.classList.remove('ring-2', 'ring-blue-500'));
-            e.target.classList.add('ring-2', 'ring-blue-500');
-        }
+        // Reset to defaults
+        resetBtn.addEventListener('click', () => {
+            textarea.value = '';
+            preview.textContent = '';
+            preview.className = preview.className.replace(/\btext-\S+/g, '');
+            preview.className = preview.className.replace(/\bbg-\S+/g, '');
+            preview.classList.add('text-slate-800', 'bg-white');
+            inkColors.forEach(b => b.classList.remove('ring-2', 'ring-blue-500'));
+            paperStyles.forEach(b => b.classList.remove('ring-2', 'ring-blue-500'));
+            document.querySelector('.ink-color[data-color="text-slate-800"]').classList.add('ring-2', 'ring-blue-500');
+            document.querySelector('.paper-style[data-bg="bg-white"]').classList.add('ring-2', 'ring-blue-500');
+        });
 
-        function changeBgColor(e) {
-            const bg = e.target.dataset.bg;
-            preview.classList.replace(currentBg, bg);
-            currentBg = bg;
-            bgColors.forEach(b => b.classList.remove('ring-2', 'ring-blue-500'));
-            e.target.classList.add('ring-2', 'ring-blue-500');
-        }
-
-        function resetDefaults() {
-            preview.classList.remove(currentColor);
-            preview.classList.remove(currentBg);
-            preview.classList.add('bg-white', 'text-black');
-            currentColor = 'text-black';
-            currentBg = 'bg-white';
-            textInput.value = '';
-            penColors.forEach(b => b.classList.remove('ring-2', 'ring-blue-500'));
-            bgColors.forEach(b => b.classList.remove('ring-2', 'ring-blue-500'));
-            document.querySelector('.pen-color[data-color="text-black"]').classList.add('ring-2', 'ring-blue-500');
-            document.querySelector('.bg-color[data-bg="bg-white"]').classList.add('ring-2', 'ring-blue-500');
-            updatePreview();
-        }
-
-        async function downloadPerfectCopy() {
+        // Export as image
+        async function exportAsImage() {
             try {
                 await document.fonts.load('32px "Caveat"');
-            } catch (e) {
-                console.error('Font loading error:', e);
-                alert('Error loading font. Please try again.');
-                return;
-            }
-
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            const scale = 2;
-            
-            // Fixed dimensions to match preview
-            const notebookWidth = 816; // Matches CSS notebook-width
-            const pagePadding = 24;
-            const lineHeight = 40;
-            
-            // Calculate height based on content
-            const tempDiv = document.createElement('div');
-            tempDiv.style.visibility = 'hidden';
-            tempDiv.style.position = 'absolute';
-            tempDiv.style.width = `${notebookWidth}px`;
-            tempDiv.style.whiteSpace = 'pre-wrap';
-            tempDiv.style.font = '32px "Caveat"';
-            tempDiv.style.padding = '24px 24px 24px 52px';
-            tempDiv.style.lineHeight = '40px';
-            tempDiv.textContent = preview.textContent;
-            document.body.appendChild(tempDiv);
-            
-            const contentHeight = tempDiv.offsetHeight;
-            document.body.removeChild(tempDiv);
-
-            // Set canvas dimensions
-            canvas.width = notebookWidth * scale;
-            canvas.height = contentHeight * scale;
-            
-            // HD rendering setup
-            ctx.scale(scale, scale);
-            ctx.imageSmoothingEnabled = true;
-
-            // Draw background
-            ctx.fillStyle = getComputedStyle(preview).backgroundColor;
-            ctx.fillRect(0, 0, notebookWidth, contentHeight);
-
-            // Draw margin line
-            ctx.strokeStyle = '#fecaca';
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.moveTo(32.5, 0);
-            ctx.lineTo(32.5, contentHeight);
-            ctx.stroke();
-
-            // Draw horizontal lines
-            ctx.strokeStyle = '#cbd5e1';
-            ctx.lineWidth = 1;
-            const startY = pagePadding + 2; // Match preview's pt-2 (2px padding-top)
-            for(let y = startY; y < contentHeight; y += lineHeight) {
-                const lineY = Math.floor(y) + 0.5;
-                ctx.beginPath();
-                ctx.moveTo(44.5, lineY);
-                ctx.lineTo(notebookWidth - pagePadding, lineY);
-                ctx.stroke();
-            }
-
-            // Prepare text
-            ctx.font = `32px "Caveat"`;
-            ctx.fillStyle = getComputedStyle(preview).color;
-            ctx.textBaseline = 'top';
-
-            // Text positioning
-            const textX = 52; // Matches preview's pl-[52px]
-            const maxTextWidth = notebookWidth - textX - pagePadding;
-            let currentY = startY;
-
-            // Wrap text and draw
-            const lines = preview.textContent.split('\n');
-            lines.forEach(line => {
-                let words = line.split(' ');
-                let currentLine = words[0] || '';
                 
-                for(let i = 1; i < words.length; i++) {
-                    const testLine = currentLine + ' ' + words[i];
-                    const metrics = ctx.measureText(testLine);
-                    if (metrics.width > maxTextWidth) {
-                        ctx.fillText(currentLine, textX, currentY);
-                        currentY += lineHeight;
-                        currentLine = words[i];
-                    } else {
-                        currentLine = testLine;
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const scale = 2;
+                
+                // Set dimensions
+                const previewRect = preview.getBoundingClientRect();
+                canvas.width = previewRect.width * scale;
+                canvas.height = previewRect.height * scale;
+                
+                // HD rendering
+                ctx.scale(scale, scale);
+                ctx.imageSmoothingEnabled = true;
+
+                // Draw background
+                ctx.fillStyle = getComputedStyle(preview).backgroundColor;
+                ctx.fillRect(0, 0, canvas.width/scale, canvas.height/scale);
+
+                // Draw margin line
+                ctx.strokeStyle = '#e0e7ff';
+                ctx.lineWidth = 1;
+                const lineHeight = 40;
+                for(let y = lineHeight; y < canvas.height/scale; y += lineHeight) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(canvas.width/scale, y);
+                    ctx.stroke();
+                }
+
+                // Draw text
+                ctx.font = '32px "Caveat"';
+                ctx.fillStyle = getComputedStyle(preview).color;
+                ctx.textBaseline = 'top';
+                
+                const lines = preview.textContent.split('\n');
+                let currentY = 40;
+                const paddingLeft = 80;
+                const maxWidth = previewRect.width - paddingLeft - 32;
+
+                lines.forEach(line => {
+                    let currentLine = '';
+                    const words = line.split(' ');
+                    
+                    for(const word of words) {
+                        const testLine = currentLine ? `${currentLine} ${word}` : word;
+                        const metrics = ctx.measureText(testLine);
+                        
+                        if(metrics.width > maxWidth && currentLine) {
+                            ctx.fillText(currentLine, paddingLeft, currentY);
+                            currentY += lineHeight;
+                            currentLine = word;
+                        } else {
+                            currentLine = testLine;
+                        }
                     }
-                }
-                
-                if (currentLine) {
-                    ctx.fillText(currentLine, textX, currentY);
-                    currentY += lineHeight;
-                }
-            });
+                    
+                    if(currentLine) {
+                        ctx.fillText(currentLine, paddingLeft, currentY);
+                        currentY += lineHeight;
+                    }
+                });
 
-            // Create download
-            const link = document.createElement('a');
-            link.download = 'perfect-copy.png';
-            link.href = canvas.toDataURL('image/png', 1.0);
-            link.click();
+                // Create download
+                const link = document.createElement('a');
+                link.download = 'inkspire-export.png';
+                link.href = canvas.toDataURL();
+                link.click();
+
+            } catch(error) {
+                alert('Error generating image: ' + error.message);
+            }
         }
+
+        downloadBtn.addEventListener('click', exportAsImage);
     </script>
 </body>
 </html>
