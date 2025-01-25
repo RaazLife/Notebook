@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Perfect Match Notebook</title>
+    <title>Perfect Notebook Converter</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body class="bg-gray-100 min-h-screen p-8">
     <div class="max-w-4xl mx-auto">
-        <h1 class="text-3xl font-bold text-center mb-8 font-serif text-gray-800">Perfect Match Notebook</h1>
+        <h1 class="text-3xl font-bold text-center mb-8 font-serif text-gray-800">Perfect Notebook Converter</h1>
         
         <div class="bg-white rounded-xl shadow-xl p-6 mb-6">
             <div class="flex gap-4 mb-4 flex-wrap">
@@ -49,7 +49,7 @@
                     class="w-full min-h-[300px] p-6 rounded-lg font-['Caveat'] text-2xl border-l-4 border-red-200 
                            bg-[length:100%_40px] bg-[linear-gradient(to_bottom,#cbd5e1_1px,transparent_1px)] 
                            leading-[40px] pl-[52px] shadow-inner pt-2 bg-white text-black"
-                    style="white-space: pre-wrap; word-break: break-word;"></div>
+                    style="white-space: pre-wrap; word-wrap: break-word;"></div>
             </div>
             
             <div class="flex justify-end gap-4">
@@ -63,7 +63,7 @@
                     id="downloadBtn"
                     class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg 
                            transition-all duration-200 shadow-md hover:shadow-lg">
-                    📥 Download Perfect Match
+                    📥 Download Perfect Copy
                 </button>
             </div>
         </div>
@@ -127,29 +127,6 @@
             updatePreview();
         }
 
-        function breakWord(ctx, word, maxWidth) {
-            const parts = [];
-            let currentPart = '';
-            
-            for (const char of word) {
-                const testPart = currentPart + char;
-                const width = ctx.measureText(testPart).width;
-                if (width > maxWidth) {
-                    if (currentPart === '') {
-                        parts.push(testPart);
-                        currentPart = '';
-                    } else {
-                        parts.push(currentPart);
-                        currentPart = char;
-                    }
-                } else {
-                    currentPart = testPart;
-                }
-            }
-            if (currentPart) parts.push(currentPart);
-            return parts;
-        }
-
         function downloadPerfectCopy() {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
@@ -162,7 +139,7 @@
             const paddingTop = parseFloat(style.paddingTop);
             const paddingLeft = parseFloat(style.paddingLeft);
             const paddingRight = parseFloat(style.paddingRight);
-            const maxTextWidth = previewRect.width - paddingLeft - paddingRight;
+            const maxTextWidth = previewRect.width - paddingLeft - paddingRight - 28;
 
             // Set canvas dimensions
             canvas.width = Math.floor(previewRect.width * scale);
@@ -172,10 +149,6 @@
             ctx.scale(scale, scale);
             ctx.imageSmoothingEnabled = false;
             ctx.textDrawingMode = 'glyph';
-            ctx.font = `32px "Caveat"`;
-            ctx.fillStyle = style.color;
-            ctx.textBaseline = 'top';
-            ctx.textRendering = 'geometricPrecision';
 
             // Draw background
             ctx.fillStyle = style.backgroundColor;
@@ -200,37 +173,32 @@
                 ctx.stroke();
             }
 
-            // Process text
-            let currentY = paddingTop;
-            const lines = preview.textContent.split('\n');
+            // Prepare text
+            ctx.font = `32px "Caveat"`;
+            ctx.fillStyle = style.color;
+            ctx.textBaseline = 'top';
+            ctx.textRendering = 'geometricPrecision';
 
+            // Wrap text and draw
+            const lines = preview.textContent.split('\n');
+            let currentY = paddingTop;
+            
             lines.forEach(originalLine => {
                 const words = originalLine.split(' ');
-                let currentLine = '';
+                let currentLine = words[0] || '';
                 
-                for (const word of words) {
-                    const testLine = currentLine ? `${currentLine} ${word}` : word;
-                    const testWidth = ctx.measureText(testLine).width;
-
-                    if (testWidth <= maxTextWidth) {
-                        currentLine = testLine;
+                for(let i = 1; i < words.length; i++) {
+                    const testLine = currentLine + ' ' + words[i];
+                    const metrics = ctx.measureText(testLine);
+                    if (metrics.width > maxTextWidth) {
+                        ctx.fillText(currentLine, paddingLeft, currentY);
+                        currentY += lineHeight;
+                        currentLine = words[i];
                     } else {
-                        if (currentLine === '') {
-                            // Break long word
-                            const parts = breakWord(ctx, word, maxTextWidth);
-                            parts.forEach((part, i) => {
-                                ctx.fillText(part, paddingLeft, currentY);
-                                currentY += lineHeight;
-                            });
-                            currentLine = '';
-                        } else {
-                            ctx.fillText(currentLine, paddingLeft, currentY);
-                            currentY += lineHeight;
-                            currentLine = word;
-                        }
+                        currentLine = testLine;
                     }
                 }
-
+                
                 if (currentLine) {
                     ctx.fillText(currentLine, paddingLeft, currentY);
                     currentY += lineHeight;
@@ -239,7 +207,7 @@
 
             // Create download
             const link = document.createElement('a');
-            link.download = 'perfect-match.png';
+            link.download = 'perfect-copy.png';
             link.href = canvas.toDataURL('image/png', 1.0);
             link.click();
         }
