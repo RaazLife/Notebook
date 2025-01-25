@@ -12,6 +12,7 @@
         <h1 class="text-3xl font-bold text-center mb-8 font-serif text-gray-800">Perfect Notebook Converter</h1>
         
         <div class="bg-white rounded-xl shadow-xl p-6 mb-6">
+            <!-- UI controls remain the same -->
             <div class="flex gap-4 mb-4 flex-wrap">
                 <div>
                     <label class="block text-sm font-bold mb-2">Pen Color:</label>
@@ -30,6 +31,7 @@
                 </div>
             </div>
 
+            <!-- Text input and preview sections remain the same -->
             <div class="mb-4">
                 <label class="block text-gray-700 text-sm font-bold mb-2 font-sans">
                     Type your notes:
@@ -85,7 +87,7 @@
         penColors.forEach(btn => btn.addEventListener('click', changePenColor));
         bgColors.forEach(btn => btn.addEventListener('click', changeBgColor));
         resetBtn.addEventListener('click', resetDefaults);
-        downloadBtn.addEventListener('click', downloadPerfectCopy);
+        downloadBtn.addEventListener('click', () => downloadPerfectCopy().catch(console.error));
 
         // Set initial state
         document.querySelector('.pen-color[data-color="text-black"]').classList.add('ring-2', 'ring-blue-500');
@@ -114,9 +116,10 @@
         }
 
         function resetDefaults() {
-            preview.className = preview.className.replace(/\btext-\S+/g, '');
-            preview.className = preview.className.replace(/\bbg-\S+/g, '');
-            preview.className += ' bg-white text-black';
+            // Fixed: Only remove current color classes instead of all text/bg classes
+            preview.classList.remove(currentColor);
+            preview.classList.remove(currentBg);
+            preview.classList.add('bg-white', 'text-black');
             currentColor = 'text-black';
             currentBg = 'bg-white';
             textInput.value = '';
@@ -127,7 +130,16 @@
             updatePreview();
         }
 
-        function downloadPerfectCopy() {
+        async function downloadPerfectCopy() {
+            try {
+                // Ensure font is loaded before proceeding
+                await document.fonts.load('32px "Caveat"');
+            } catch (e) {
+                console.error('Font loading error:', e);
+                alert('Error loading font. Please try again.');
+                return;
+            }
+
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             const scale = 3;
@@ -148,7 +160,6 @@
             // HD rendering setup
             ctx.scale(scale, scale);
             ctx.imageSmoothingEnabled = false;
-            ctx.textDrawingMode = 'glyph';
 
             // Draw background
             ctx.fillStyle = style.backgroundColor;
@@ -177,7 +188,6 @@
             ctx.font = `32px "Caveat"`;
             ctx.fillStyle = style.color;
             ctx.textBaseline = 'top';
-            ctx.textRendering = 'geometricPrecision';
 
             // Wrap text and draw
             const lines = preview.textContent.split('\n');
@@ -211,9 +221,6 @@
             link.href = canvas.toDataURL('image/png', 1.0);
             link.click();
         }
-
-        // Initialize font
-        document.fonts.load('32px "Caveat"').then(() => console.log('Font ready'));
     </script>
 </body>
 </html>
