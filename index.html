@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Notebook Converter</title>
+    <title>Perfect Notebook Converter</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body class="bg-gray-100 min-h-screen p-8">
     <div class="max-w-4xl mx-auto">
-        <h1 class="text-3xl font-bold text-center mb-8 font-serif text-gray-800">Ultimate Notebook Converter</h1>
+        <h1 class="text-3xl font-bold text-center mb-8 font-serif text-gray-800">Perfect Notebook Converter</h1>
         
         <div class="bg-white rounded-xl shadow-xl p-6 mb-6">
             <div class="flex gap-4 mb-4 flex-wrap">
@@ -37,7 +37,7 @@
                 <textarea 
                     id="textInput" 
                     class="w-full h-48 p-4 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 bg-gray-50 font-sans placeholder-gray-400"
-                    placeholder="Write your notes here... Press Enter for new lines"></textarea>
+                    placeholder="Write your notes here..."></textarea>
             </div>
             
             <div class="mb-4">
@@ -49,7 +49,7 @@
                     class="w-full min-h-[300px] p-6 rounded-lg font-['Caveat'] text-2xl border-l-4 border-red-200 
                            bg-[length:100%_40px] bg-[linear-gradient(to_bottom,#cbd5e1_1px,transparent_1px)] 
                            leading-[40px] pl-[52px] shadow-inner pt-2 bg-white text-black"
-                    style="white-space: pre-wrap;"></div>
+                    style="white-space: pre-wrap; word-wrap: break-word;"></div>
             </div>
             
             <div class="flex justify-end gap-4">
@@ -57,13 +57,13 @@
                     id="resetBtn"
                     class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg 
                            transition-all duration-200 shadow-md hover:shadow-lg">
-                    Reset Defaults
+                    Reset
                 </button>
                 <button 
                     id="downloadBtn"
                     class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg 
                            transition-all duration-200 shadow-md hover:shadow-lg">
-                    📥 Download HD Image
+                    📥 Download Perfect Copy
                 </button>
             </div>
         </div>
@@ -85,44 +85,40 @@
         penColors.forEach(btn => btn.addEventListener('click', changePenColor));
         bgColors.forEach(btn => btn.addEventListener('click', changeBgColor));
         resetBtn.addEventListener('click', resetDefaults);
-        downloadBtn.addEventListener('click', downloadHDImage);
+        downloadBtn.addEventListener('click', downloadPerfectCopy);
 
-        // Set initial selections
+        // Set initial state
         document.querySelector('.pen-color[data-color="text-black"]').classList.add('ring-2', 'ring-blue-500');
         document.querySelector('.bg-color[data-bg="bg-white"]').classList.add('ring-2', 'ring-blue-500');
         updatePreview();
 
         function updatePreview() {
             preview.textContent = textInput.value;
-            // Force layout update for accurate measurements
-            void preview.offsetHeight;
+            void preview.offsetHeight; // Trigger reflow
         }
 
         function changePenColor(e) {
-            e.preventDefault();
             const color = e.target.dataset.color;
-            preview.classList.remove(currentColor);
-            preview.classList.add(color);
+            preview.classList.replace(currentColor, color);
             currentColor = color;
             penColors.forEach(b => b.classList.remove('ring-2', 'ring-blue-500'));
             e.target.classList.add('ring-2', 'ring-blue-500');
         }
 
         function changeBgColor(e) {
-            e.preventDefault();
             const bg = e.target.dataset.bg;
-            preview.classList.remove(currentBg);
-            preview.classList.add(bg);
+            preview.classList.replace(currentBg, bg);
             currentBg = bg;
             bgColors.forEach(b => b.classList.remove('ring-2', 'ring-blue-500'));
             e.target.classList.add('ring-2', 'ring-blue-500');
         }
 
         function resetDefaults() {
-            preview.classList.remove(currentColor, currentBg);
+            preview.className = preview.className.replace(/\btext-\S+/g, '');
+            preview.className = preview.className.replace(/\bbg-\S+/g, '');
+            preview.className += ' bg-white text-black';
             currentColor = 'text-black';
             currentBg = 'bg-white';
-            preview.classList.add(currentColor, currentBg);
             textInput.value = '';
             penColors.forEach(b => b.classList.remove('ring-2', 'ring-blue-500'));
             bgColors.forEach(b => b.classList.remove('ring-2', 'ring-blue-500'));
@@ -131,32 +127,34 @@
             updatePreview();
         }
 
-        function downloadHDImage() {
+        function downloadPerfectCopy() {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            const scale = 3; // HD scale factor
+            const scale = 3;
             
-            // Get precise dimensions
+            // Get precise measurements
             const previewRect = preview.getBoundingClientRect();
-            canvas.width = Math.floor(previewRect.width * scale);
-            canvas.height = Math.floor(previewRect.height * scale);
-            
-            // HD rendering settings
-            ctx.scale(scale, scale);
-            ctx.imageSmoothingEnabled = false;
-            ctx.textDrawingMode = 'glyph';
-
-            // Get computed styles
             const style = window.getComputedStyle(preview);
             const lineHeight = parseFloat(style.lineHeight);
             const paddingTop = parseFloat(style.paddingTop);
             const paddingLeft = parseFloat(style.paddingLeft);
+            const paddingRight = parseFloat(style.paddingRight);
+            const maxTextWidth = previewRect.width - paddingLeft - paddingRight - 28;
 
-            // Set background
+            // Set canvas dimensions
+            canvas.width = Math.floor(previewRect.width * scale);
+            canvas.height = Math.floor(preview.scrollHeight * scale);
+            
+            // HD rendering setup
+            ctx.scale(scale, scale);
+            ctx.imageSmoothingEnabled = false;
+            ctx.textDrawingMode = 'glyph';
+
+            // Draw background
             ctx.fillStyle = style.backgroundColor;
             ctx.fillRect(0, 0, canvas.width/scale, canvas.height/scale);
 
-            // Draw crisp margin line
+            // Draw margin line
             ctx.strokeStyle = '#fecaca';
             ctx.lineWidth = 4;
             ctx.beginPath();
@@ -164,7 +162,7 @@
             ctx.lineTo(32.5, canvas.height/scale);
             ctx.stroke();
 
-            // Draw sharp horizontal lines
+            // Draw horizontal lines
             ctx.strokeStyle = '#cbd5e1';
             ctx.lineWidth = 1;
             for(let y = paddingTop; y < canvas.height/scale; y += lineHeight) {
@@ -175,21 +173,41 @@
                 ctx.stroke();
             }
 
-            // Draw HD text
+            // Prepare text
             ctx.font = `32px "Caveat"`;
             ctx.fillStyle = style.color;
-            ctx.textRendering = 'geometricPrecision';
             ctx.textBaseline = 'top';
-            
+            ctx.textRendering = 'geometricPrecision';
+
+            // Wrap text and draw
             const lines = preview.textContent.split('\n');
-            lines.forEach((line, index) => {
-                const yPos = paddingTop + (index * lineHeight);
-                ctx.fillText(line, paddingLeft, yPos);
+            let currentY = paddingTop;
+            
+            lines.forEach(originalLine => {
+                const words = originalLine.split(' ');
+                let currentLine = words[0] || '';
+                
+                for(let i = 1; i < words.length; i++) {
+                    const testLine = currentLine + ' ' + words[i];
+                    const metrics = ctx.measureText(testLine);
+                    if (metrics.width > maxTextWidth) {
+                        ctx.fillText(currentLine, paddingLeft, currentY);
+                        currentY += lineHeight;
+                        currentLine = words[i];
+                    } else {
+                        currentLine = testLine;
+                    }
+                }
+                
+                if (currentLine) {
+                    ctx.fillText(currentLine, paddingLeft, currentY);
+                    currentY += lineHeight;
+                }
             });
 
-            // Create HD download
+            // Create download
             const link = document.createElement('a');
-            link.download = 'notebook-hd.png';
+            link.download = 'perfect-copy.png';
             link.href = canvas.toDataURL('image/png', 1.0);
             link.click();
         }
